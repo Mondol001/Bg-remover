@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>গ্লসি ব্যাকগ্রাউন্ড রিমুভার</title>
+  <!-- Google Fonts: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #2EC4B6;
+      --accent-color: #FF9F1C;
+      --text-color: #ffffff;
+      --background: #0A101E;
+      --card-bg: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--background);
+      color: var(--text-color);
+      min-height: 100vh;
+    }
+
+    /* Navigation Bar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 6%;
+      background: var(--background);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary-color);
+    }
+
+    .cta-button {
+      background: var(--primary-color);
+      color: var(--background);
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: transform 0.3s;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 12rem 2rem 6rem;
+      background: linear-gradient(135deg, #1B2735 0%, #090A0F 100%);
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #CCCCCC;
+      max-width: 600px;
+      margin: 0 auto 3rem;
+    }
+
+    /* Upload Container */
+    .upload-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 3rem;
+      background: var(--card-bg);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .upload-area {
+      border: 3px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 15px;
+      padding: 4rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .upload-area:hover {
+      border-color: var(--primary-color);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .upload-icon {
+      font-size: 4rem;
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .supported-files {
+      margin-top: 1.5rem;
+      color: #888;
+      font-size: 0.9rem;
+    }
+
+    /* Processing Spinner */
+    .processing {
+      margin-top: 30px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid rgba(255, 255, 255, 0.3);
+      border-top: 6px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Result Section */
+    .result-section {
+      margin-top: 30px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .result-section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+    }
+
+    .result-section img {
+      max-width: 100%;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .result-section button {
+      margin-top: 20px;
+      background: var(--accent-color);
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      color: var(--text-color);
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .result-section button:hover {
+      background: var(--primary-color);
+    }
+
+    /* Pricing Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    .pricing-modal {
+      background: var(--background);
+      padding: 3rem;
+      border-radius: 20px;
+      max-width: 1000px;
+      width: 90%;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
+
+    .pricing-plans {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .plan-card {
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: 15px;
+      text-align: center;
+    }
+
+    .plan-card h3 {
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+
+    .price {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 1rem 0;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+
+      .pricing-plans {
+        grid-template-columns: 1fr;
+      }
+
+      .upload-container {
+        padding: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="logo">BG Remover</div>
+    <div class="nav-links">
+      <a href="#home">হোম</a>
+      <a href="#pricing" onclick="showPricing()">প্রাইসিং</a>
+      <a href="#about">সম্পর্কে</a>
+    </div>
+    <a href="#get-started" class="cta-button">শুরু করুন</a>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>সেকেন্ডেই সরিয়ে ফেলুন<br>ছবির ব্যাকগ্রাউন্ড</h1>
+    <p>এআই-পাওয়ারের মাধ্যমে মুহূর্তেই তৈরি করুন পারফেক্ট ট্রান্সপারেন্ট ব্যাকগ্রাউন্ড</p>
+
+    <!-- Upload Area -->
+    <div class="upload-container">
+      <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+        <span class="material-icons-round upload-icon">cloud_upload</span>
+        <h3>ছবি এখানে আপলোড করুন</h3>
+        <p>JPEG, PNG, JPG, WEBP ফরম্যাট সাপোর্টেড</p>
+        <input type="file" id="fileInput" class="file-input" accept="image/*">
+      </div>
+      <div class="supported-files">
+        সর্বোচ্চ রেজুলেশন: 5000x5000px (25MB)
+      </div>
+    </div>
+
+    <!-- Processing Spinner -->
+    <div class="processing" id="processing">
+      <div class="spinner"></div>
+      <p>প্রসেসিং হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...</p>
+    </div>
+
+    <!-- Result Section -->
+    <div class="result-section" id="resultSection">
+      <h2>রিমুভ করা ছবি</h2>
+      <img id="resultImage" src="" alt="রিমুভ করা ছবি">
+      <button id="downloadBtn">ডাউনলোড করুন</button>
+    </div>
+  </section>
+
+  <!-- Pricing Modal -->
+  <div class="modal-overlay" id="pricingModal">
+    <div class="pricing-modal">
+      <span class="modal-close" onclick="hidePricing()">&times;</span>
+      <h2>আমাদের প্রাইসিং প্ল্যান</h2>
+      <div class="pricing-plans">
+        <div class="plan-card">
+          <h3>বেসিক</h3>
+          <div class="price">ফ্রি</div>
+          <ul>
+            <li>প্রতিদিন 10টি প্রসেস</li>
+            <li>SD রেজুলেশন</li>
+            <li>বেসিক এডিটিং</li>
+          </ul>
+          <button class="cta-button">নির্বাচন করুন</button>
+        </div>
+        <div class="plan-card" style="background: var(--primary-color); color: var(--background);">
+          <h3>প্রো</h3>
+          <div class="price">৳299/মাস</div>
+          <ul>
+            <li>সীমাহীন প্রসেস</li>
+            <li>HD রেজুলেশন</li>
+            <li>অ্যাডভান্সড এডিটিং</li>
+          </ul>
+          <button class="cta-button">নির্বাচন করুন</button>
+        </div>
+        <div class="plan-card">
+          <h3>বিজনেস</h3>
+          <div class="price">৳999/মাস</div>
+          <ul>
+            <li>বাল্ক প্রসেসিং</li>
+            <li>API এক্সেস</li>
+            <li>প্রায়োরিটি সাপোর্ট</li>
+          </ul>
+          <button class="cta-button">নির্বাচন করুন</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Pricing Modal Functions
+    function showPricing() {
+      document.getElementById('pricingModal').style.display = 'flex';
+    }
+
+    function hidePricing() {
+      document.getElementById('pricingModal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById('pricingModal');
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    // File Upload Handling
+    const uploadArea = document.querySelector('.upload-area');
+    const fileInput = document.getElementById('fileInput');
+    const processing = document.getElementById('processing');
+    const resultSection = document.getElementById('resultSection');
+    const resultImage = document.getElementById('resultImage');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    let selectedFile = null;
+    let processedImageURL = "";
+
+    // Drag & Drop Functionality
+    uploadArea.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+
+    uploadArea.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+    });
+
+    uploadArea.addEventListener('drop', function(e) {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        selectedFile = e.dataTransfer.files[0];
+        handleFile(selectedFile);
+      }
+    });
+
+    // File Input Change Event
+    fileInput.addEventListener('change', function(e) {
+      if (e.target.files && e.target.files[0]) {
+        selectedFile = e.target.files[0];
+        handleFile(selectedFile);
+      }
+    });
+
+    function handleFile(file) {
+      processing.style.display = "flex";
+      resultSection.style.display = "none";
+
+      const formData = new FormData();
+      formData.append("image_file", file);
+
+      fetch("https://api.remove.bg/v1.0/removebg", {
+        method: "POST",
+        headers: { "X-Api-Key": "cjp4u4i9PJNsQhssyW488muC" }, // Replace with your API key
+        body: formData
+      })
+      .then(response => {
+        if (response.status !== 200) {
+          return response.text().then(text => { throw new Error(text) });
+        }
+        return response.blob();
+      })
+      .then(blob => {
+        processing.style.display = "none";
+        processedImageURL = URL.createObjectURL(blob);
+        resultImage.src = processedImageURL;
+        resultSection.style.display = "flex";
+      })
+      .catch(error => {
+        processing.style.display = "none";
+        alert("ত্রুটি: " + error.message);
+        console.error(error);
+      });
+    }
+
+    downloadBtn.addEventListener('click', function() {
+      if (processedImageURL) {
+        const a = document.createElement('a');
+        a.href = processedImageURL;
+        a.download = "processed_image.png";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+    });
+  </script>
+</body>
+</html>
